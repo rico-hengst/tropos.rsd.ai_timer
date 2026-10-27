@@ -41,6 +41,11 @@ OPENCODE_CONFIG=$PWD/opencode.json opencode --print-logs --log-level DEBUG run "
 opencode session list
 ```
 
+Verifying on a device
+```
+opencode debug config
+```
+
 ## OpenCode terminal request
 
 1. Code suggestion

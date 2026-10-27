@@ -5,15 +5,18 @@
       "npm": "@ai-sdk/openai-compatible",
       "name": "SAIA",
       "options": {
-        "baseURL": "https://chat-ai.academiccloud.de/v1____",
-        "apiKey": "26c71b50e5cb3decaf823e3a56e3b189"
+        "baseURL": "https://chat-ai.academiccloud.de/v1",
+        "apiKey": "{env:SAIA_API_KEY}"
       },
       "models": {
-        "qwen3-coder-30b-a3b-instruct": {
-          "name": "Qwen3 Coder 30B (SAIA)"
+        "qwen3-30b-a3b-instruct-2507": {
+          "name": "Qwen 3 30B A3B Instruct 2507 (SAIA)"
         },
-        "devstral-2-123b-instruct-2512": {
-          "name": "Devstral 2 123B (SAIA)"
+        "deepseek-v4-flash-0731": {
+          "name": "DeepSeek V4 Flash 0731 (SAIA)"
+        },
+        "meta-llama-3.1-8b-instruct" : { 
+          "name" : "Meta Llama 3.1 8B Instruct (SAIA)"
         }
       }
     }

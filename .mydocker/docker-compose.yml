@@ -1,0 +1,19 @@
+services:
+  python-analyzer:
+    build:
+      context: ../
+      dockerfile: .mydocker/Dockerfile
+      args:
+        ENV_FILE: environment.yml
+    image: python-project-analyzer:latest
+    container_name: python-analyzer
+    user: user
+    volumes:
+      - ../:/workspace
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    environment:
+      - OPENCODE_AI_KEY=${OPENCODE_AI_KEY:-}
+      - CONDA_ENV_NAME=py3.11_docker
+    command: opencode
