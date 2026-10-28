@@ -1,0 +1,19 @@
+services:
+  python-analyzer:
+    build:
+      context: ../
+      dockerfile: .mydocker/Dockerfile.venv
+      args:
+        ENV_FILE: environment.yml
+    image: image_sbx_opencode_venv:latest
+    container_name: container_sbx_opencode_venv
+    user: user
+    volumes:
+      - ../:/workspace
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    environment:
+      - OPENCODE_AI_KEY=${OPENCODE_AI_KEY:-}
+      - VENV_ENV_NAME=py3.11_docker
+    command: opencode

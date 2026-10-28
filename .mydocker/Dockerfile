@@ -1,6 +1,10 @@
 # Dockerfile for Python project analysis with opencode
 FROM continuumio/anaconda3:latest
 
+# Get key during build and store to ENV
+ARG SAIA_API_KEY
+ENV SAIA_API_KEY=${SAIA_API_KEY}
+
 # Set environment variables to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH="/opt/conda/bin:${PATH}"
@@ -14,6 +18,8 @@ RUN apt-get update && apt-get install -y \
     sudo \
     vim \
     nano \
+    build-essential \
+    linux-headers-generic \
     && rm -rf /var/lib/apt/lists/*
 
 # Create user "user" with sudo privileges FIRST
@@ -30,12 +36,16 @@ ARG ENV_FILE=environment.yml
 COPY --chown=user:user ${ENV_FILE} /home/user/environment.yml
 
 # Create conda environment from environment.yml
-RUN conda env create -f /home/user/environment.yml \
-    || conda env update -f /home/user/environment.yml \
-    || conda create -n py3.11_docker python=3.11 -y
+RUN conda env create -f /home/user/environment.yml --name py3.11_docker 
+
+# Add conda initialization to .bashrc for interactive shells
+RUN echo 'source /opt/conda/etc/profile.d/conda.sh' >> /home/user/.bashrc \
+    && echo 'conda activate py3.11_docker' >> /home/user/.bashrc
+
+# RUN conda activate py3.11_docker
 
 # Install opencode
-RUN curl -fsSL https://opencode.ai/install | bash
+RUN curl -fsSL https://opencode.ai/v2/install | bash
 
 # Add opencode to PATH
 ENV PATH="/home/user/.opencode/bin:${PATH}"

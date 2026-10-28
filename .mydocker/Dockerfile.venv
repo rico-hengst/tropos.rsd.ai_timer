@@ -1,0 +1,71 @@
+# Dockerfile for Python project analysis with opencode
+FROM ubuntu:24.04
+
+# Get key during build and store to ENV
+ARG SAIA_API_KEY
+ENV SAIA_API_KEY=${SAIA_API_KEY}
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV VENV_ENV_NAME="py3.11_docker"
+ENV VENV_ENV_FILE="requirements.txt"
+
+# Install Python and basic utilities
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
+    curl \
+    git \
+    sudo \
+    vim \
+    nano \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create user "user" with sudo privileges
+RUN useradd -m -s /bin/bash user \
+    && echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Switch to user
+USER user
+WORKDIR /home/user
+
+# Copy requirements.txt file
+ARG ENV_FILE=requirements.txt
+COPY --chown=user:user ${ENV_FILE} /home/user/requirements.txt
+
+# Create venv environment
+RUN python3 -m venv /home/user/env_docker
+
+# Install requirements
+RUN /home/user/env_docker/bin/pip install -r /home/user/requirements.txt
+
+# Install opencode
+RUN curl -fsSL https://opencode.ai/v2/install | bash
+
+# Add to PATH
+ENV PATH="/home/user/.opencode/bin:${PATH}"
+ENV PATH="/home/user/env_docker/bin:${PATH}"
+
+# Create workspace directory
+RUN sudo mkdir -p /workspace && sudo chown -R user:user /workspace
+
+# Create entrypoint script that fixes permissions and activates venv
+RUN echo '#!/bin/bash\n\
+# Fix workspace ownership\n\
+sudo chown -R user:user /workspace 2>/dev/null || true\n\
+# Activate virtual environment\n\
+source /home/user/env_docker/bin/activate\n\
+# Execute the provided command\n\
+exec "$@"' > /home/user/entrypoint.sh \
+    && chmod +x /home/user/entrypoint.sh \
+    && chown user:user /home/user/entrypoint.sh
+
+# Set working directory
+WORKDIR /workspace
+
+# Set entrypoint with bash
+ENTRYPOINT ["/bin/bash", "/home/user/entrypoint.sh"]
+
+# Default command
+CMD ["bash"]

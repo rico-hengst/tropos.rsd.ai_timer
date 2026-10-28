@@ -2,11 +2,11 @@ services:
   python-analyzer:
     build:
       context: ../
-      dockerfile: .mydocker/Dockerfile
+      dockerfile: .mydocker/Dockerfile.conda
       args:
         ENV_FILE: environment.yml
-    image: python-project-analyzer:latest
-    container_name: python-analyzer
+    image: image_sbx_opencode_anaconda:latest
+    container_name: container_sbx_opencode_anaconda
     user: user
     volumes:
       - ../:/workspace

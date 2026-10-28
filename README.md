@@ -1,5 +1,10 @@
 # tropos.rsd.ai_timer
-Example to use OpenCode - terminal-first AI coding agent - to implement a decorator function wrapper
+Docker sandboxes for safe use of AI coding agent (opencode)
+
+
+Target audience: 
+
+Simple python project: Example to use OpenCode - terminal-first AI coding agent - to implement a decorator function wrapper
 
 ## AI coding agent @ GWDG
 * see [GWDG AI Services - AgenticCoding](https://docs.hpc.gwdg.de/services/ai-services/coco-ai/agentic_coding/index.html#claude-code-secu)
@@ -106,3 +111,43 @@ Key points:
 2. Code improvements
 
 3. Code test units
+
+
+
+# build
+sudo docker build --build-arg SAIA_API_KEY="${SAIA_API_KEY}" -t python-project-analyzer:latest     -f .mydocker/Dockerfile     --build-arg ENV_FILE=environment.yml .
+sudo docker build --build-arg SAIA_API_KEY="${SAIA_API_KEY}" -t image_sbx_opencode_anaconda:latest     -f .mydocker/Dockerfile.conda     --build-arg ENV_FILE=environment.yml .
+sudo docker build --build-arg SAIA_API_KEY="${SAIA_API_KEY}" -t image_sbx_opencode_venv:latest     -f .mydocker/Dockerfile.venv     --build-arg ENV_FILE=requirements.txt .
+
+
+# run
+sudo docker run -it --rm     --user user     -v "$(pwd)":/workspace     -w /workspace     python-project-analyzer:latest     bash
+sudo docker run -it --rm     --user "$(id -u):$(id -g)"   -v "$(pwd)":/workspace     -w /workspace     image_sbx_opencode_anaconda:latest     bash
+sudo docker run -it --rm     --user "$(id -u):$(id -g)"   -v "$(pwd)":/workspace     -w /workspace     image_sbx_opencode_venv:latest     bash
+# run somewhere
+sudo docker run -it --rm     --user "$(id -u):$(id -g)"   -v "$(pwd)/../test_mqtt/":/workspace     -w /workspace     python-project-analyzer:latest     bash
+
+
+
+
+opencode run hello --print-logs
+
+opencode debug config
+
+OPENCODE_CONFIG=$PWD/opencode.jsonc opencode debug config
+
+OPENCODE_CONFIG=$PWD/opencode.jsonc opencode run --model saia/deepseek-v4-flash-0731 "Hi"
+
+Verification:
+You can test if it's working by running:
+opencode auth list
+
+# funktioniert
+OPENCODE_CONFIG=.opencode/opencode.jsonc opencode run -m "saia/deepseek-v4-flash-0731" "hi"
+
+
+
+
+# get current model: 
+curl -X POST   --url https://chat-ai.academiccloud.de/v1/models   --header 'Accept: application/json'   --header 'Authorization: Bearer 26c71b50e5cb3decaf823e3a56e3b189'   --header 'Content-Type: application/json' | jq -S
+
