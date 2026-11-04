@@ -15,5 +15,5 @@ services:
     tty: true
     environment:
       - OPENCODE_AI_KEY=${OPENCODE_AI_KEY:-}
-      - VENV_ENV_NAME=py3.11_docker
+      - VENV_ENV_NAME=env_docker
     command: opencode
